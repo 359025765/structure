@@ -1,18 +1,25 @@
 <?php
+
+/**
+ * 用数组来模拟队列，约定数组左边出队，右边入队
+ * front 指向队列头部第一个有效的数据位置
+ * rear 下一个从队尾入队元素的位置
+ * 为了避免”队列为空“和”队列未满“的判别条件冲突，我们有意浪费了一个位置（循环数组中任何时刻一定至少有一个位置不存放有效元素）
+ * 判别队列为空的条件是：front == rear
+ * 判别队列为满的条件是 (rear+1) % len == front。可以这样理解，当rear循环到数组的前面，要从后面追上front，还差一格的时候，判定队列为满
+ */
 class MyCircularQueue {
     private $queue = [];
-    private $len = 0;
-    private $cap = 0;
-    private $frone = 0;  // 队首
-    private $rear = 0;  // 队尾
+    private $len = 0;  // 队列长度
+    private $front = 0;
+    private $rear = 0; 
 
     /**
      * Initialize your data structure here. Set the size of the queue to be k.
      * @param Integer $k
      */
     function __construct($k) {
-        // else $this->k = $k;
-        $this->k = $k;
+        $this->len = $k + 1;
     }
   
     /**
@@ -21,17 +28,11 @@ class MyCircularQueue {
      * @return Boolean
      */
     function enQueue($value) {
-        if ($this->len !== $this->k) {
-
-            // if ($index = array_search(false, $this->queue)) {
-            //     $this->queue[$index] = $value;
-            // } else {
-            //     array_push($this->queue, $value);
-            // }
-            $this->len++;
-        } else {
-            return false;
-        }
+        if ($this->isFull()) return false;
+        $this->queue[$this->rear] = $value;
+        $this->rear = ($this->rear + 1) % $this->len;
+        echo $this->rear. "\n";
+        return true;
     }
   
     /**
@@ -39,10 +40,9 @@ class MyCircularQueue {
      * @return Boolean
      */
     function deQueue() {
-        $len = count($this->queue) - 1;
-        $index = array_search(false, $this->queue);
-        if ($index) unset($this->queue[$index]);
-        else unset($this->queue[$len]);
+        if ($this->isEmpty()) return false;
+        unset($this->queue[$this->front]);
+        $this->front = ($this->front + 1) % $this->len;
         return true;
     }
   
@@ -51,7 +51,8 @@ class MyCircularQueue {
      * @return Integer
      */
     function Front() {
-        return $this->queue[0] ?? false;
+        if ($this->isEmpty()) return -1;
+        return $this->data[$this->front];
     }
   
     /**
@@ -59,8 +60,9 @@ class MyCircularQueue {
      * @return Integer
      */
     function Rear() {
-        $len = count($this->queue) - 1;
-        return $this->queue[$len] ?? false;
+        if ($this->isEmpty()) return -1;
+        // return ($this->rear - 1 + $this->len) % $this->len;
+        return $this->queue[($this->rear - 1 + $this->len) % $this->len];
     }
   
     /**
@@ -68,7 +70,7 @@ class MyCircularQueue {
      * @return Boolean
      */
     function isEmpty() {
-        return empty($this->queue) ?: false;
+        return $this->front == $this->rear;
     }
   
     /**
@@ -76,9 +78,7 @@ class MyCircularQueue {
      * @return Boolean
      */
     function isFull() {
-        $len = count($this->queue);
-        if ($len === $this->k) return true;
-        else return false;
+       return ($this->rear + 1) % $this->len == $this->front;
     }
 }
 
@@ -87,8 +87,12 @@ $obj->enQueue(1);
 $obj->enQueue(2);
 $obj->enQueue(3);
 $obj->deQueue();
+$obj->deQueue();
+$obj->deQueue();
 $obj->enQueue(4);
-var_dump($obj->enQueue(5555), $obj, $obj->Rear());
+// $obj->enQueue(6);
+// $obj->enQueue(7);
+var_dump($obj, $obj->Rear());
 // echo $obj->deQueue();
 // var_dump($obj, $obj->Rear());
  
