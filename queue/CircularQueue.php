@@ -93,6 +93,4 @@ $obj->enQueue(4);
 // $obj->enQueue(6);
 // $obj->enQueue(7);
 var_dump($obj, $obj->Rear());
-// echo $obj->deQueue();
-// var_dump($obj, $obj->Rear());
  
