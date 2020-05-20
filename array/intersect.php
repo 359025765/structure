@@ -41,6 +41,7 @@ function intersect2(array $nums1, array $nums2) : array {
 }
 
 /*
+ * 双指针碰撞法
  * 当传入的数组是有序的
  */
 function intersect3(array $nums1, array $nums2) : array {
