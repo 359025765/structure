@@ -1,31 +1,44 @@
 <?php
+require_once 'dump.php';
 
 class Node {
     public $next = null;
     public $val;
-    public function __construct($val=null) {
+    public function __construct($val = null) {
         $this->val = $val;
     }
 }
 
 // 反向单链
-function reverse($head) {
-    if ($head !== null) {
-        if ($head->next !== null) {
-            $reverList = null;
-            $next = null;
-            $currentNode  = $head;
-        }
+function reverse($current) {
+    $prev = null;
+    while ($current != null) {
+        $next = $current->next;
+        $current->next = $prev;
+        [ $prev, $current ] = [ $current, $next ];
+        var_dump($prev);
     }
+}
 
-    while ($currentNode !== null) {
-        $next = $currentNode->next;
-        $currentNode->next = $reverList;
-        $reverList = $currentNode;
-        $currentNode = $next;
+// 查找链表的中间值
+function middleNode($list) {
+    $fast = $slow = $list;
+    while ($fast && $fast->next && $fast->next->next) {
+        $fast = $fast->next->next;
+        $slow = $slow->next;
     }
+    var_dump($slow->val);
+}
 
-    var_dump($reverList);
+function checkNodeLoop($list) {
+    $slow = $fast = $list; $loop = false;
+
+    while ($fast && $fast && $fast->next && $fast->next->next) {
+        $fast = $fast->next->next;
+        $slow = $slow->next;
+        if ($fast->val == $slow->val) $loop = true; break;
+    }
+    var_dump($loop);
 }
 
 
@@ -76,12 +89,19 @@ function readInNode($list,$i) {
 
 $node1 = new Node(1);
 $node2 = new Node(2);
-$node3 = new Node(5);
-$node4 = new Node(7);
+$node3 = new Node(4);
+$node4 = new Node(5);
+$node5 = new Node(8);
+$node6 = new Node(9);
+$node7 = new Node(10);
+
 $node1->next = $node2;
 $node2->next = $node3;
 $node3->next = $node4;
+$node4->next = $node5;
+$node5->next = $node6;
+$node6->next = $node7;
+$node7->next = $node3;
 
-readInNode($node1,2);
-
-//reverse($node1);
+// reverse($node1);
+checkNodeLoop($node1);
